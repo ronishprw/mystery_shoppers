@@ -3,8 +3,10 @@ import azure.functions as func
 
 app = func.FunctionApp()
 
+# Every Monday at 13:00 UTC = 5:00 AM PST (UTC-8).
+# Format: second minute hour day month day-of-week  (1 = Monday). Times are UTC.
 @app.timer_trigger(
-    schedule="0 0 10 * * *",
+    schedule="0 0 13 * * 1",
     arg_name="timer",
     run_on_startup=False
 )
