@@ -1,0 +1,25 @@
+{
+  "_note": "Column names are matched after cleaning: 'Job ID', 'job_id' and JOB_ID are all JOB_ID. 'key' = one row per key in silver (latest bronze row wins). 'types' = columns to convert (anything not listed stays text). Values that cannot be converted become NULL and are reported in the log.",
+
+  "MYSTERY_SHOPPING_CATEGORIES": {
+    "key": ["JOB_ID", "CATEGORY_NAME"],
+    "types": {}
+  },
+
+  "MYSTERY_SHOPPING_JOBS": {
+    "key": ["JOB_ID"],
+    "types": {
+      "JOB_DATE": "DATE",
+      "JOB_SCORE": "NUMBER(18,4)",
+      "POINTS_SCORED": "NUMBER(18,4)",
+      "POSSIBLE_POINTS": "NUMBER(18,4)",
+      "NPS": "NUMBER(18,4)",
+      "IS_DELETED": "BOOLEAN"
+    }
+  },
+
+  "MYSTERY_SHOPPING_QUESTIONS": {
+    "key": ["JOB_ID", "CATEGORY_NAME", "QUESTION_TEXT"],
+    "types": {}
+  }
+}

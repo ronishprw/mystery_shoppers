@@ -1,0 +1,16 @@
+# secrets - never commit these
+local.settings.json
+*.p8
+*.pem
+*.key
+.env
+*.PublishSettings
+
+# python / azure functions
+__pycache__/
+*.pyc
+venv/
+.venv/
+.python_packages/
+.azure/
+.vscode/

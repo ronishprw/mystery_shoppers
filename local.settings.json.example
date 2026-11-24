@@ -1,0 +1,10 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "python",
+    "SFTP_PWD": "<password from 1Password>",
+    "SF_ACCOUNT": "ZFWHITR-MC64001",
+    "SF_PRIVATE_KEY_PATH": "C:/keys/rsa_key.p8"
+  }
+}

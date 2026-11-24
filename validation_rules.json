@@ -1,0 +1,40 @@
+{
+  "_note": "Column names can be written as JOB_ID, Job ID or job id - they are matched to the real columns. Test changes first with the workflow mode 'audit-existing'.",
+  "_example_accepted_values": { "Wave": ["Wave 1", "Wave 2"] },
+
+  "MYSTERY_SHOPPING_CATEGORIES": {
+    "primary_key": ["JOB_ID", "CATEGORY_NAME"],
+    "not_null": ["JOB_ID", "CATEGORY_NAME"],
+    "accepted_values": {},
+    "existing_key": "reject",
+    "on_failure": "quarantine_rows"
+  },
+
+  "MYSTERY_SHOPPING_JOBS": {
+    "primary_key": ["JOB_ID"],
+    "not_null": [
+      "LOCATION_INTERNAL_ID",
+      "LOCATION_NAME",
+      "REGION",
+      "DATA_SOURCE",
+      "WAVE",
+      "JOB_SCORE",
+      "POINTS_SCORED",
+      "POSSIBLE_POINTS",
+      "NPS",
+      "JOB_DATE",
+      "IS_DELETED"
+    ],
+    "accepted_values": {},
+    "existing_key": "reject",
+    "on_failure": "quarantine_rows"
+  },
+
+  "MYSTERY_SHOPPING_QUESTIONS": {
+    "primary_key": ["JOB_ID", "CATEGORY_NAME"],
+    "not_null": ["CATEGORY_NAME", "QUESTION_TEXT"],
+    "accepted_values": {},
+    "existing_key": "reject",
+    "on_failure": "quarantine_rows"
+  }
+}
