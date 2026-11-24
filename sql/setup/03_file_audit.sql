@@ -1,0 +1,18 @@
+-- 03_file_audit.sql
+-- Safe to run repeatedly. The function also runs this file on every execution.
+-- One row per file per attempt; validator.py uses it to know which files are done.
+
+USE ROLE DATA_ENGINEER;
+USE WAREHOUSE WH_DATA_ENGINEER;
+USE SCHEMA METRO_BRONZE_DB.MYSTERY_SHOPPER;
+
+CREATE TABLE IF NOT EXISTS FILE_AUDIT (
+  FILE_NAME      VARCHAR,
+  TARGET_TABLE   VARCHAR,
+  STATUS         VARCHAR,       -- LOADED, LOADED_WITH_REJECTS, LOADED_WITH_WARNINGS, REJECTED, FAILED, SEEDED
+  ROWS_READ      NUMBER,
+  ROWS_LOADED    NUMBER,
+  ROWS_REJECTED  NUMBER,
+  MESSAGE        VARCHAR,
+  PROCESSED_AT   TIMESTAMP_LTZ DEFAULT CURRENT_TIMESTAMP()
+);
