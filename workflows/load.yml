@@ -1,0 +1,38 @@
+name: Load SFTP to Snowflake
+
+on:
+  workflow_dispatch:        # run manually from the Actions tab
+  # schedule:               # uncomment to run automatically (UTC)
+  #   - cron: "0 10 * * *"
+
+jobs:
+  load:
+    # Use "ubuntu-latest" first. If the SFTP step shows BLOCKED (the provider's
+    # IP allowlist), switch to "self-hosted" and run a runner on an allowlisted machine.
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Show runner IP and test SFTP port
+        run: |
+          echo "Runner public IP: $(curl -s https://api.ipify.org)"
+          if timeout 10 bash -c '</dev/tcp/205.174.24.185/1891'; then
+            echo "SFTP port 1891: OPEN"
+          else
+            echo "SFTP port 1891: BLOCKED (this runner's IP is probably not allowlisted)"
+          fi
+
+      - name: Run load
+        env:
+          SFTP_PWD: ${{ secrets.SFTP_PWD }}
+          SF_PRIVATE_KEY_B64: ${{ secrets.SF_PRIVATE_KEY_B64 }}
+        run: python loader.py

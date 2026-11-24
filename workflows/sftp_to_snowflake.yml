@@ -1,0 +1,59 @@
+name: SFTP to Snowflake
+
+on:
+  workflow_dispatch:        # run manually from the Actions tab
+    inputs:
+      mode:
+        description: "What to run"
+        type: choice
+        default: load
+        options:
+          - load             # SFTP -> stage -> validation -> bronze
+          - silver           # bronze -> silver
+          - load-and-silver  # both
+          - audit-existing   # read-only: check rules against rows already in bronze
+          - seed-existing    # one-time: mark files loaded before validation as done
+#   schedule:               # uncomment to run automatically (UTC)
+#     - cron: "0 10 * * *"
+
+jobs:
+  sftp-to-snowflake:
+    # If the SFTP step shows BLOCKED (provider IP allowlist), change this to
+    # "self-hosted" and use a runner on an allowlisted machine.
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Show runner IP and test SFTP port
+        run: |
+          echo "Runner public IP: $(curl -s https://api.ipify.org)"
+          if timeout 10 bash -c '</dev/tcp/205.174.24.185/1891'; then
+            echo "SFTP port 1891: OPEN"
+          else
+            echo "SFTP port 1891: BLOCKED (this runner's IP is probably not allowlisted)"
+          fi
+
+      - name: Run
+        env:
+          SFTP_PWD: ${{ secrets.SFTP_PWD }}
+          SF_PRIVATE_KEY_B64: ${{ secrets.SF_PRIVATE_KEY_B64 }}
+          MODE: ${{ github.event.inputs.mode || 'load' }}
+        run: |
+          case "$MODE" in
+            load)            python loader.py load ;;
+            silver)          python silver.py ;;
+            load-and-silver) python loader.py load && python silver.py ;;
+            audit-existing)  python loader.py audit-existing ;;
+            seed-existing)   python loader.py seed-existing ;;
+            *) echo "unknown mode $MODE"; exit 1 ;;
+          esac
