@@ -1,25 +1,55 @@
 {
-  "_note": "Column names are matched after cleaning: 'Job ID', 'job_id' and JOB_ID are all JOB_ID. 'key' = one row per key in silver (latest bronze row wins). 'types' = columns to convert (anything not listed stays text). Values that cannot be converted become NULL and are reported in the log.",
+  "_note": "Column names are matched after cleaning: 'Job ID', 'job_id' and JOB_ID are all JOB_ID. key = one row per key in silver (newest bronze row wins). types = columns to convert: DATE, BOOLEAN, NUMBER(18,4), ... or PERCENT for text like '94.87%' (stored as 94.87). Anything not listed stays text. kpi = score calculated in silver as numerator / denominator * 100 (NULL when the denominator is empty or 0); compare_to = the provider's own score column, used only for a log check.",
 
   "MYSTERY_SHOPPING_CATEGORIES": {
     "key": ["JOB_ID", "CATEGORY_NAME"],
-    "types": {}
+    "types": {
+      "POINTS_SCORED": "NUMBER(18,4)",
+      "POSSIBLE_POINTS": "NUMBER(18,4)",
+      "SCORE": "PERCENT"
+    },
+    "kpi": {
+      "name": "KPI_SCORE_PCT",
+      "numerator": "POINTS_SCORED",
+      "denominator": "POSSIBLE_POINTS",
+      "decimals": 2,
+      "compare_to": "SCORE"
+    }
   },
 
   "MYSTERY_SHOPPING_JOBS": {
     "key": ["JOB_ID"],
     "types": {
       "JOB_DATE": "DATE",
-      "JOB_SCORE": "NUMBER(18,4)",
+      "JOB_SCORE": "PERCENT",
       "POINTS_SCORED": "NUMBER(18,4)",
       "POSSIBLE_POINTS": "NUMBER(18,4)",
       "NPS": "NUMBER(18,4)",
-      "IS_DELETED": "BOOLEAN"
+      "IS_DELETED": "BOOLEAN",
+      "IS_EDITED": "BOOLEAN"
+    },
+    "kpi": {
+      "name": "KPI_SCORE_PCT",
+      "numerator": "POINTS_SCORED",
+      "denominator": "POSSIBLE_POINTS",
+      "decimals": 2,
+      "compare_to": "JOB_SCORE"
     }
   },
 
   "MYSTERY_SHOPPING_QUESTIONS": {
     "key": ["JOB_ID", "CATEGORY_NAME", "QUESTION_TEXT"],
-    "types": {}
+    "types": {
+      "POINTS": "NUMBER(18,4)",
+      "POSSIBLE_POINTS": "NUMBER(18,4)",
+      "QUESTION_SCORE": "PERCENT"
+    },
+    "kpi": {
+      "name": "KPI_SCORE_PCT",
+      "numerator": "POINTS",
+      "denominator": "POSSIBLE_POINTS",
+      "decimals": 2,
+      "compare_to": "QUESTION_SCORE"
+    }
   }
 }
