@@ -9,7 +9,8 @@ on:
         default: load
         options:
           - load             # SFTP -> stage -> validation -> bronze
-          - silver           # bronze -> silver
+          - silver           # bronze -> silver (full on first run, then incremental)
+          - silver-full      # rebuild silver from scratch
           - load-and-silver  # both
           - audit-existing   # read-only: check rules against rows already in bronze
           - seed-existing    # one-time: mark files loaded before validation as done
@@ -52,6 +53,7 @@ jobs:
           case "$MODE" in
             load)            python loader.py load ;;
             silver)          python silver.py ;;
+            silver-full)     python silver.py full ;;
             load-and-silver) python loader.py load && python silver.py ;;
             audit-existing)  python loader.py audit-existing ;;
             seed-existing)   python loader.py seed-existing ;;
