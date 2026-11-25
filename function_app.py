@@ -1,4 +1,6 @@
 import logging
+import os
+
 import azure.functions as func
 
 app = func.FunctionApp()
@@ -15,3 +17,11 @@ def sftp_to_bronze(timer: func.TimerRequest) -> None:
     from loader import run_load
     run_load()
     logging.info("Bronze ingestion completed")
+
+    # Silver runs only when the App Setting RUN_SILVER is "true".
+    # First run builds silver in full, later runs are incremental.
+    if os.environ.get("RUN_SILVER", "").strip().lower() == "true":
+        logging.info("Starting Silver build")
+        from silver import run_silver
+        run_silver()
+        logging.info("Silver build completed")
