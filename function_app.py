@@ -15,7 +15,13 @@ app = func.FunctionApp()
     run_on_startup=False
 )
 def sftp_to_bronze(timer: func.TimerRequest) -> None:
-    from notifier import notify_run
+    try:
+        from notifier import notify_run
+    except Exception:  # a missing or broken notifier must never stop the load
+        logging.exception("notifier.py could not be imported - emails are disabled for this run")
+
+        def notify_run(*args, **kwargs):
+            pass
 
     results, silver_lines, error = [], [], None
     try:
