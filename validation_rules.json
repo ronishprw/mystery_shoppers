@@ -31,7 +31,7 @@
   },
 
   "MYSTERY_SHOPPING_QUESTIONS": {
-    "primary_key": ["JOB_ID", "CATEGORY_NAME"],
+    "primary_key": ["JOB_ID", "CATEGORY_NAME", "QUESTION_TEXT"],
     "not_null": ["CATEGORY_NAME", "QUESTION_TEXT"],
     "accepted_values": {},
     "existing_key": "reject",
